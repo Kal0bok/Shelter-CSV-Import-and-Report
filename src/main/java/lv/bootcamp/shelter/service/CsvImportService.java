@@ -31,11 +31,40 @@ public class CsvImportService {
         if(parts.length < 5){
             log.warn("Skipping malformed row {}: insufficient columns", i + 1);
             skippedRows++;
-            continue;S
+            continue;
         }
-        // 4) Allow blank age as unknown (null), but reject non-numeric age values.
-        // 5) Parse intakeDate using DateTimeFormatter.
-        // 6) Map each row to Animal object.
+        try {
+            String name = parts[0].trim();
+            if (name.isEmpty()) throw new IllegalArgumentException("Name is required");
+
+            String species = parts[1].trim();
+            if (species.isEmpty()) throw new IllegalArgumentException("Species is required");
+
+            Integer age = null;
+            String ageStr = parts[2].trim();
+            if (!ageStr.isEmpty()) {
+                age = Integer.parseInt(ageStr);
+                if (age < 0) throw new IllegalArgumentException("Age cannot be negative");
+            }
+
+            String vaccinatedStr = parts[3].trim();
+            if (!vaccinatedStr.equalsIgnoreCase("true") && !vaccinatedStr.equalsIgnoreCase("false")) {
+                throw new IllegalArgumentException("Invalid vaccinated value");
+            }
+            boolean vaccinated = Boolean.parseBoolean(vaccinatedStr);
+
+            String dateStr = parts[4].trim();
+            LocalDate intakeDate = LocalDate.parse(dateStr, dateFormatter);
+
+            Animal animal = new Animal(name, species, age, vaccinated, intakeDate);
+            allAnimals.add(animal);
+
+        } catch (Exception e) {
+            log.warn("Skipping malformed row {}: {}", i + 1, e.getMessage());
+            skippedRows++;
+        }
+    }
+
 
         return new ImportResult(allAnimals, 0);
     }
