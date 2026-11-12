@@ -9,6 +9,12 @@ import java.util.*;
 
 public class ShelterAnalyticsService {
 
+    public Map<String, Long> countVaccinatedPerSpecies(List<Animal> allAnimals){
+        return allAnimals.stream()
+                .filter(Animal::isVaccinated)
+                .collect(Collectors.groupingBy(Animal::getSpecies,Collectors.counting()));
+    }
+
     public ShelterReportData buildReportData(ImportResult importResult) {
         List<Animal> allAnimals = importResult.allAnimals();
 
@@ -24,14 +30,6 @@ public class ShelterAnalyticsService {
             animalsNeedingVetInput.add(animal.getName() + "(" + animal.getSpecies() + ")");
         }
         }
-
-        public Map<String, Long> countVaccinatedPerSpecies(List<Animal> allAnimals){
-            return allAnimals.stream()
-                    .filter(Animal::isVaccinated)
-                    .collect(Collectors.groupingBy(Animal::getSpecies,Collectors.counting()));
-        }
-
-
         return new ShelterReportData(importResult);
     }
 }
