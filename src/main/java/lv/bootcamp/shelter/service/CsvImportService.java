@@ -22,7 +22,10 @@ public class CsvImportService {
         // TODO Step 1:
         List<String> lines = Files.readAllLines(inputPath, StandartCharsets.UTF-8);
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        // 2) Skip header row.
+
+        for(int i = 1; i < lines.size(); i++){
+            String line = lines.get(i);
+        }
         // 3) Skip malformed rows and log warnings.
         // 4) Allow blank age as unknown (null), but reject non-numeric age values.
         // 5) Parse intakeDate using DateTimeFormatter.
