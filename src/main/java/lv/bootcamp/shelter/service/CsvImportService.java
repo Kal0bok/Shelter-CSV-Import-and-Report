@@ -26,7 +26,13 @@ public class CsvImportService {
         for(int i = 1; i < lines.size(); i++){
             String line = lines.get(i);
         }
-        // 3) Skip malformed rows and log warnings.
+
+        String[] parts = line.split(",", -1);
+        if(parts.length < 5){
+            log.warn("Skipping malformed row {}: insufficient columns", i + 1);
+            skippedRows++;
+            continue;S
+        }
         // 4) Allow blank age as unknown (null), but reject non-numeric age values.
         // 5) Parse intakeDate using DateTimeFormatter.
         // 6) Map each row to Animal object.
