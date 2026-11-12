@@ -15,12 +15,14 @@ public class ShelterAnalyticsService {
         Map<String, List<Animal>> animalsBySpecies = new HashMap<>();
         List<String> animalsNeedingVetInput = new ArrayList<>();
 
-        // TODO Step 2:
-        // Fill all collections:
-        // - allAnimals (already available from import)
-        // - uniqueSpecies
-        // - animalsBySpecies
-        // - animalsNeedingVetInput with format name(species)
+        for(Animal animal : allAnimals){
+            uniqueSpecies.add(animal.getSpecies());
+
+            animalsBySpecies.computeIfAbsent(animal.getSpecies(), k -> new ArrayList<>()).add(animal);
+        if(animal.getAge() == null){
+            animalsNeedingVetInput.add(animal.getName() + "(" + animal.getSpecies() + ")");
+        }
+        }
 
         // TODO Step 3:
         // Add necessary fields to ShelterReportData
