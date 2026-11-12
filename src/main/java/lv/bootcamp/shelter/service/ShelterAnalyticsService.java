@@ -15,6 +15,13 @@ public class ShelterAnalyticsService {
                 .collect(Collectors.groupingBy(Animal::getSpecies,Collectors.counting()));
     }
 
+    public Map<String, Animal> findOldestAnimalPerSpecies(List<Animal> allAnimals){
+        return allAnimals.stream()
+                .filter(a -> a.getAge() != null)
+                .collect(Collectors.toMap(Animal::getSpecies, animal ->animal,
+                        (existing, replacement) -> existing.getAge() > replacement.getAge() ? existing : replacement));
+    }
+
     public ShelterReportData buildReportData(ImportResult importResult) {
         List<Animal> allAnimals = importResult.allAnimals();
 
