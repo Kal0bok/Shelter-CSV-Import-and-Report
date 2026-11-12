@@ -4,7 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import lv.bootcamp.shelter.model.Animal;
 import lv.bootcamp.shelter.service.data.ImportResult;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.DateTimeException;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +20,8 @@ public class CsvImportService {
         List<Animal> allAnimals = new ArrayList<>();
 
         // TODO Step 1:
-        // 1) Read intake.csv with UTF-8.
+        List<String> lines = Files.readAllLines(inputPath, StandartCharsets.UTF-8);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         // 2) Skip header row.
         // 3) Skip malformed rows and log warnings.
         // 4) Allow blank age as unknown (null), but reject non-numeric age values.
