@@ -32,6 +32,12 @@ public class ReportExportService {
             writer.write("Skipped rows: " + reportData.getSkippedRowsCount());
             writer.newLine();
             writer.newLine();
+
+            writer.write("Unique Species");
+            writer.newLine();
+            writer.write(String.join(", ", reportData.getUniqueSpecies()));
+            writer.newLine();
+            writer.newLine();
         }
 
         throw new UnsupportedOperationException("TODO: implement report export");
