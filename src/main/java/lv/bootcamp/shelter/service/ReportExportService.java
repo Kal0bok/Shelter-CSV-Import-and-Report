@@ -18,10 +18,18 @@ public class ReportExportService {
     public void writeReport(Path outputPath, ShelterReportData reportData) {
         try(BufferedWriter writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8)){
 
-            writer.write("=== SHELTER UPLOAD REPORT ===");
+            writer.write("SHELTER UPLOAD REPORT");
             writer.newLine();
             String formattedDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             writer.write("Generated at: " + formattedDate);
+            writer.newLine();
+            writer.newLine();
+
+            writer.write("Import Totals");
+            writer.newLine();
+            writer.write("Successfully imported: " + reportData.getAllAnimals().size());
+            writer.newLine();
+            writer.write("Skipped rows: " + reportData.getSkippedRowsCount());
             writer.newLine();
             writer.newLine();
         }
