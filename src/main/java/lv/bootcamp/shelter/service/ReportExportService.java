@@ -39,7 +39,7 @@ public class ReportExportService {
             writer.newLine();
             writer.newLine();
 
-            writer.write("Oldest Animal Per Species");
+            writer.write("  Oldest Animal Per Species");
             writer.newLine();
             if (reportData.getOldestAnimalPerSpecies().isEmpty()) {
                 writer.write("None");
@@ -52,6 +52,22 @@ public class ReportExportService {
             }
             writer.newLine();
         }
+
+        writer.write("Animals Needing Vet Input");
+        writer.newLine();
+        if (reportData.getAnimalsNeedingVetInput().isEmpty()) {
+            writer.write("None");
+            writer.newLine();
+        } else {
+            writer.write(String.join(", ", reportData.getAnimalsNeedingVetInput()));
+            writer.newLine();
+        }
+
+        System.out.println("Report successfully written to " + outputPath);
+
+    } catch (IOException e) {
+        System.err.println("Failed to write report file: " + e.getMessage());
+    }
 
         throw new UnsupportedOperationException("TODO: implement report export");
     }
