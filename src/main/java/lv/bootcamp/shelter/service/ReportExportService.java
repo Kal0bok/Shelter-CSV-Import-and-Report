@@ -38,6 +38,19 @@ public class ReportExportService {
             writer.write(String.join(", ", reportData.getUniqueSpecies()));
             writer.newLine();
             writer.newLine();
+
+            writer.write("Oldest Animal Per Species");
+            writer.newLine();
+            if (reportData.getOldestAnimalPerSpecies().isEmpty()) {
+                writer.write("None");
+                writer.newLine();
+            } else {
+                for (Map.Entry<String, Animal> entry : reportData.getOldestAnimalPerSpecies().entrySet()) {
+                    writer.write(entry.getKey() + ": " + entry.getValue().getName() + " (Age: " + entry.getValue().getAge() + ")");
+                    writer.newLine();
+                }
+            }
+            writer.newLine();
         }
 
         throw new UnsupportedOperationException("TODO: implement report export");
