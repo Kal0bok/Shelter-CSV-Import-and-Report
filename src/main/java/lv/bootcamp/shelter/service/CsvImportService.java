@@ -23,7 +23,7 @@ public class CsvImportService {
         int skippedRows = 0;
 
         try {
-            // 1) Read intake.csv with UTF-8
+            //1. Read intake.csv with UTF-8
             List<String> lines = Files.readAllLines(inputPath, StandardCharsets.UTF_8);
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
