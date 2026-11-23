@@ -10,83 +10,71 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class ReportExportService {
 
     public void writeReport(Path outputPath, ShelterReportData reportData) {
-        List<Animal> animals = reportData.importResult().allAnimals();
-        int skippedRows = reportData.importResult().skippedRows();
+        try {
+            Files.createDirectories(outputPath.getParent());
+        } catch (IOException ignored) {}
 
         try (BufferedWriter writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8)) {
-
-            writer.write("SHELTER UPLOAD REPORT");
+            writer.write("=== SHELTER UPLOAD REPORT ===");
             writer.newLine();
             String formattedDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             writer.write("Generated at: " + formattedDate);
             writer.newLine();
             writer.newLine();
 
-            writer.write("Import Totals");
+            writer.write("--- Import Totals ---");
             writer.newLine();
-            writer.write("Successfully imported: " + animals.size());
+            writer.write("Successfully imported: " + reportData.importResult().allAnimals().size());
             writer.newLine();
-            writer.write("Skipped rows: " + skippedRows);
-            writer.newLine();
-            writer.newLine();
-
-            List<String> uniqueSpecies = animals.stream()
-                    .map(Animal::getSpecies)
-                    .distinct()
-                    .sorted()
-                    .toList();
-
-            writer.write("Unique Species");
-            writer.newLine();
-            writer.write(String.join(", ", uniqueSpecies));
+            writer.write("Skipped rows: " + reportData.importResult().skippedRows());
             writer.newLine();
             writer.newLine();
 
-            writer.write("Oldest Animal Per Species");
+            writer.write("--- Unique Species ---");
+            writer.newLine();
+            writer.write(String.join(", ", reportData.uniqueSpecies()));
+            writer.newLine();
             writer.newLine();
 
-            Map<String, Optional<Animal>> oldestPerSpecies = animals.stream()
-                    .filter(a -> a.getAge() != null)
-                    .collect(Collectors.groupingBy(
-                            Animal::getSpecies,
-                            Collectors.maxBy(Comparator.comparing(Animal::getAge))
-                    ));
-
-            if (oldestPerSpecies.isEmpty()) {
+            writer.write("--- Vaccinated Per Species ---");
+            writer.newLine();
+            if (reportData.vaccinatedPerSpecies().isEmpty()) {
                 writer.write("None");
                 writer.newLine();
             } else {
-                for (Map.Entry<String, Optional<Animal>> entry : oldestPerSpecies.entrySet()) {
-                    if (entry.getValue().isPresent()) {
-                        Animal animal = entry.getValue().get();
-                        writer.write(entry.getKey() + ": " + animal.getName() + " (Age: " + animal.getAge() + ")");
-                        writer.newLine();
-                    }
+                for (Map.Entry<Object, Object> entry : reportData.vaccinatedPerSpecies().entrySet()) {
+                    writer.write(entry.getKey() + ": " + entry.getValue());
+                    writer.newLine();
                 }
             }
             writer.newLine();
 
-            List<String> needingVet = animals.stream()
-                    .filter(a -> a.getAge() == null)
-                    .map(a -> a.getName() + "(" + a.getSpecies() + ")")
-                    .toList();
-
-            writer.write("Animals Needing Vet Input");
+            writer.write("--- Oldest Animal Per Species ---");
             writer.newLine();
-            if (needingVet.isEmpty()) {
+            if (reportData.oldestAnimalPerSpecies().isEmpty()) {
                 writer.write("None");
                 writer.newLine();
             } else {
-                writer.write(String.join(", ", needingVet));
+                for (Map.Entry<Object, Object> entry : reportData.oldestAnimalPerSpecies().entrySet()) {
+                    Animal animal = (Animal) entry.getValue();
+                    writer.write(entry.getKey() + ": " + animal.getName() + " (Age: " + animal.getAge() + ")");
+                    writer.newLine();
+                }
+            }
+            writer.newLine();
+
+            writer.write("--- Animals Needing Vet Input ---");
+            writer.newLine();
+            if (reportData.animalsNeedingVetInput().isEmpty()) {
+                writer.write("None");
+                writer.newLine();
+            } else {
+                writer.write(String.join(", ", reportData.animalsNeedingVetInput()));
                 writer.newLine();
             }
 
